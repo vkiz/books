@@ -299,3 +299,151 @@ getAnnotationsByType, getDeclaredAnnotation, getDeclaredAnnotationsByType (c JDK
 Класс **Throwable** является вершиной иерархии классов исключений в Java.
 
 Cм. [главу 10](../../part01/chapter10/readme.md).
+
+## Класс SecurityManager
+
+Класс **SecurityManager** (менеджер безопасности) - это класс, который определяет политику безопасности для приложения.
+Политика определяет допустимые действия в каком-либо контексте (в классах, которые, возможно, являются небезопасными).
+Приложение может разрешить или запретить какую-либо операцию. Любые действия, не разрешенные политикой безопасности, 
+вызывают исключение SecurityException.
+
+Используя менеджер безопасности, можно контролировать доступ к операциям: ввода-вывода, файловым, отражения (reflection),
+групп потоков исполнения, сокетов (хост, порт), загрузки классов, завершения приложения, доступа к системным свойствам:
+
+Accept a socket connection from a specified host and port number;
+Modify a thread (change its priority, stop it, and so on);
+Open a socket connection to a specified host and port number;
+Create a new class loader;
+Delete a specified file;
+Create a new process;
+Cause the application to exit;
+Load a dynamic library that contains native methods;
+Wait for a connection on a specified local port number;
+Load a class from a specified package (used by class loaders);
+Add a new class to a specified package (used by class loaders);
+Access or modify system properties;
+Access a specified system property;
+Read from a specified file;
+Write to a specified file.
+
+См. методы, начинающиеся на "check".
+
+Приложение может запросить своего менеджера безопасности, чтобы узнать, какие действия разрешены.
+Как правило, веб-апплеты работают с менеджером безопасности, предоставляемым браузером или плагином Java Web Start.
+Другие типы приложений обычно запускаются без менеджера безопасности, если только его не определяет само приложение.
+Если менеджер безопасности отсутствует, то приложение не имеет политики безопасности и действует без ограничений.
+
+Получение ссылки на текущий объект менеджера безопасности:
+```
+// по умолчанию возвращается null, т.е. менеджер безопасности отсутствует
+SecurityManager manager = System.getSecurityManager();
+```
+
+Подробнее про SecurityManager:
+* [The SecurityManager](https://docs.oracle.com/javase/tutorial/essential/environment/security.html); 
+* [SecurityManager API](https://docs.oracle.com/javase/8/docs/api/java/lang/SecurityManager.html);
+* [Java security documentation](https://docs.oracle.com/javase/8/docs/technotes/guides/security/index.html);
+* [Default policy implementation and policy file syntax](https://docs.oracle.com/javase/8/docs/technotes/guides/security/PolicyFiles.html);
+* [Java security on javaworld](https://www.javaworld.com/article/2077067/core-java/java-security---how-to-install-the-security-manager-and-customize-your-security-policy.html);
+* [Providing Your own security manager](http://journals.ecs.soton.ac.uk/java/tutorial/networking/security/index.html);
+* [Безопасность в Java](http://voituk.kiev.ua/2008/08/18/bezopastnost-v-java/).
+
+## Класс StackTraceElement
+
+Класс **StackTraceElement** описывает **стековый фрейм** - элемент трассировки стека с информацией о том где возникло исключение.
+Стековый фрейм представляет _точку выполнения_, включающую в себя имя класса, метода, файла и номер строки исходного кода.
+```
+// конструктор класса
+// номер_строки = отрицательное значение, если точный номер строки отсутствует,
+// номер_строки = -2, если стековый фрейм ссылается на платформенно-ориентированный метод (native)
+
+StackTraceElement(String имя_класса, String имя_метода, String имя_файла, int номер_строки);
+
+// получение массива StackTraceElement[] ste = getStackTrace() из класса Throwable
+```
+Основные методы: equals, getClassName, getFileName, getLineNumber, getMethodName, hashCode, isNativeMethod, toString.
+
+## Класс Enum
+
+Обобщённый класс **Enum** описывает перечисление - список именованных констант.
+```
+// объявление класса
+class Enum<E extends Enum<E>>
+```
+Основные методы: clone, compareTo, equals, getDeclaringClass, hashCode, name, ordinal, toString, values, valueOf.
+
+Также см. [главу 12](../../part01/chapter12/readme.md).
+
+## Класс ClassValue
+
+Обобщённый класс **ClassValue** применяется для связи вычисляемого значения с каждым типом.
+ClassValue - это потокобезопасный способ связывания данных с классом Class. Определение: `Class ClassValue<T>`.
+Назначение этого класса в том, что он решает [Java Bug 6389107](https://bugs.openjdk.java.net/browse/JDK-6389107).
+Также его целью является предоставление информации о времени выполнения произвольным целевым классам. Это необходимо
+для динамического программирования (раньше класс находился в пакете java.dyn, позже перенесён в java.lang).
+См. также [ClassValue in Java 7](https://stackoverflow.com/questions/7444420/classvalue-in-java-7).
+
+## Интерфейс CharSequence
+
+Интерфейс **CharSequence** содержит методы для чтения последовательности символов: charAt, length, subSequence, toString;
+chars, codePoints (с JDK 8). Интерфейс реализуют классы String, StringBuilder, StringBuffer и др.
+
+## Интерфейс Comparable
+
+Обобщённый интерфейс **Comparable** (сравнимый) содержит метод compareTo() и позволяет _упорядочивать_ объекты 
+реализующих этот интерфейс классов. Это _естественное упорядочение_ экземпляров класса.
+```
+interface Comparable<T> // объявление
+int compareTo(T объект) // результат = 0 если значения обоих объектов равны,
+                        // меньше 0 если вызывающий объект имеет меньшее значение,
+                        // больше 0 если вызывающий объект имеет большее значение
+```
+Этот интерфейс реализуют классы Byte, Character, Double, Float, Long, Short, Integer, String, Enum, классы коллекций.
+
+## Интерфейс Appendable
+
+Интерфейс **Appendable** (добавляемый) содержит методы append() и позволяет добавлять символ или последовательность
+символов к объектам классов, реализующих этот интерфейс.
+
+## Интерфейс Iterable
+
+Обобщённый интерфейс **Iterable** (итерируемый, перебираемый в цикле) позволяет перебирать в цикле 
+**for в стиле for each** объекты реализующего его класса.
+```
+// объявление
+interface Iterable<T>
+// методы
+Iterator<T> iterator(); // см. главу 18
+// начиная с JDK 8 добавлены методы по умолчанию
+default void forEach(Consumer<? super T> действие); // действие для каждого перебираемого элемента; java.util.function.Consumer - функциональный интерфейс (см. главу 19)
+default Spliterator<T> spliterator(); // возвращает итератор-разделитель для перебираемой в цикле последовательности (см. главы 18 и 29)
+```
+
+## Интерфейс Readable
+
+Интерфейс **Readable** (читаемый) содержит метод read().
+```
+int read(CharBuffer буфер) throws IOException;
+```
+Он читает символы в заданный буфер и возвращает количество прочитанных символов или -1, если достигнут конец файла (EOF).
+Объект класса, реализующего этот интерфейс, может быть использован в качестве источника для чтения символов.
+
+## Интерфейс AutoCloseable
+
+Интерфейс **AutoCloseable** содержит метод close() для поддержки оператора **try с ресурсами** (начиная с JDK 7)
+(автоматическое управление ресурсами, ARM). Код внутри метода освобождает ресурсы объекта, которые он удерживает.
+```
+void close() throws Exception;
+```
+Интерфейс реализуют классы, позволяющие автоматически освобождать ресурсы с помощью `try с ресурсами` 
+(без явного вызова методов вроде close), например, классы потоков ввода-вывода.
+См. [главу 13](../../part01/chapter13/readme.md).
+
+## Интерфейс Thread.UncaughtExceptionHandler
+
+Статический интерфейс **Thread.UncaughtExceptionHandler** реализуется в классах, в которых требуется обрабатывать 
+необрабатываемые исключения, например, в классе ThreadGroup.
+Метод интерфейса:
+```
+void uncaughtException(Thread поток, Throwable исключение); // "поток", сгенерировавший "исключение"
+```
